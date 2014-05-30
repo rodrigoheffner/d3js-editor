@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <body>
+        <div id="map"></div>
+
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="http://d3js.org/d3.geo.projection.v0.min.js" charset="utf-8"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+        <script>
+        var width = P_WIDTH,
+        height = P_HEIGHT;
+
+        var projection = P_PROJECTION;
+
+        var graticule = d3.geo.graticule()(),
+        land,
+        boundaries;
+
+        var canvas = d3.select("#map").append("canvas")
+        .attr("width", width)
+        .attr("height", height)
+        .style("width", width + "px")
+        .style("height", height + "px")
+
+        var context = canvas.node().getContext("2d");
+        context.fillStyle = "#f9f9f9";
+        context.strokeStyle = "#000";
+
+        var path = d3.geo.path()
+        .projection(projection)
+        .context(context);
+
+        P_EFFECT_ROTATE_X
+
+        function redraw() {
+            context.clearRect(0, 0, width, height);
+            context.lineWidth = .5;
+            if (land) {
+                context.strokeStyle = "#000";
+                context.beginPath(), path(land), context.fill(), context.stroke();
+                context.beginPath(), path(boundaries), context.stroke();
+            }
+            context.strokeStyle = "#999";
+            context.beginPath(), path(graticule), context.stroke();
+            context.lineWidth = 2.5, context.strokeStyle = "#000";
+            context.beginPath(), path({
+                type: "Sphere"
+            }), context.stroke();
+        }
+
+        d3.json("js/data/world-110m.json", function(error, world) {
+            land = topojson.feature(world, world.objects.land);
+            boundaries = topojson.mesh(world, world.objects.countries, function(a, b) {
+                return a !== b;
+            });
+            redraw()
+        });
+        </script>
+    </body>
+</html>
