@@ -8,7 +8,8 @@ var templateKeysAndValues = {
     "P_WIDTH" : DEFAULT_WIDTH,
     "P_HEIGHT" : DEFAULT_HEIGHT,
     "P_PROJECTION" : DEFAULT_PROJECTION,
-    "P_EFFECT_ROTATE_X" : ""
+    "P_EFFECT_ROTATE_X" : "",
+    "P_EFFECT_DRAG" : ""
 }
 
 var width = 960,
@@ -172,19 +173,55 @@ $("#rotateCheckbox").click(function(){
         
         // refreshing the template
         templateKeysAndValues["P_EFFECT_ROTATE_X"] = "setInterval(function(){\n"+
-        "    var rotateX = parseInt(projection.rotate()[0]) + 1.5;\n"+
-        "    var rotateY = parseInt(projection.rotate()[1]);\n"+
+        "            var rotateX = parseInt(projection.rotate()[0]) + 1.5;\n"+
+        "            var rotateY = parseInt(projection.rotate()[1]);\n"+
         "\n"+
-        "    projection.rotate([rotateX, rotateY])\n"+
+        "            projection.rotate([rotateX, rotateY])\n"+
         "\n"+
-        "    redraw();\n"+
-        "}, 10);\n"
+        "            redraw();\n"+
+        "        }, 10);\n" +
+        "\n"
         refreshTemplate();
     } else {
         clearInterval(rotateEffect)
         
         // refreshing the template
         templateKeysAndValues["P_EFFECT_ROTATE_X"] = "";
+        refreshTemplate();
+    }
+})
+
+var dragEffect;
+$("#dragCheckbox").click(function(){
+    var isChecked = $(this).is(":checked");
+    
+    if (isChecked) {
+        canvas.call(d3.behavior.drag()
+      .on("drag", function(d) {
+            var rotate = [];
+            rotate[0] = d3.event.x;
+            rotate[1] = -d3.event.y;
+            projection.rotate(rotate);
+            redraw(path);
+      }));
+        
+        // refreshing the template
+        templateKeysAndValues["P_EFFECT_DRAG"] = "canvas.call(d3.behavior.drag()\n" +
+        "        .on(\"drag\", function(d) {\n" + 
+            "            var rotate = [];\n" +
+            "            rotate[0] = d3.event.x;\n" +
+            "            rotate[1] = -d3.event.y;\n" +
+            "            projection.rotate(rotate);\n" +
+            "            redraw(path);\n" +
+        "        }));"+
+        "\n"
+        refreshTemplate();
+    } else {
+        canvas.call(d3.behavior.drag()
+        .on("drag", function(d) {}));
+        
+        // refreshing the template
+        templateKeysAndValues["P_EFFECT_DRAG"] = "";
         refreshTemplate();
     }
 })

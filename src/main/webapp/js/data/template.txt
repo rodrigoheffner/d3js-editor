@@ -32,7 +32,7 @@
         .context(context);
 
         P_EFFECT_ROTATE_X
-
+        P_EFFECT_DRAG
         function redraw() {
             context.clearRect(0, 0, width, height);
             context.lineWidth = .5;
