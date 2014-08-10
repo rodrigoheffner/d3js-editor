@@ -9,7 +9,9 @@ var templateKeysAndValues = {
     "P_HEIGHT" : DEFAULT_HEIGHT,
     "P_PROJECTION" : DEFAULT_PROJECTION,
     "P_EFFECT_ROTATE_X" : "",
-    "P_EFFECT_DRAG" : ""
+    "P_EFFECT_DRAG" : "",
+    "SEA_COLOUR" : "#C2F4F4",
+    "LAND_COLOUR" : "#D7C7AD"
 }
 
 var width = 960,
@@ -38,17 +40,21 @@ var path = d3.geo.path()
 function redraw() {
     context.clearRect(0, 0, width, height);
     context.lineWidth = .5;
+    
+    context.fillStyle = $("#seaColour").val();
+    context.beginPath(), path({
+        type: "Sphere"
+    }), context.stroke(), context.fill();
+    
     if (land) {
         context.strokeStyle = "#000";
+        context.fillStyle = $("#landColour").val();
         context.beginPath(), path(land), context.fill(), context.stroke();
         context.beginPath(), path(boundaries), context.stroke();
     }
     context.strokeStyle = "#999";
     context.beginPath(), path(graticule), context.stroke();
     context.lineWidth = 2.5, context.strokeStyle = "#000";
-    context.beginPath(), path({
-        type: "Sphere"
-    }), context.stroke();
 }
 
 d3.json("js/data/world-110m.json", function(error, world) {
@@ -56,7 +62,7 @@ d3.json("js/data/world-110m.json", function(error, world) {
     boundaries = topojson.mesh(world, world.objects.countries, function(a, b) {
         return a !== b;
     });
-    redraw(path)
+    redraw()
 });
 
 // Code templace
@@ -202,7 +208,7 @@ $("#dragCheckbox").click(function(){
             rotate[0] = d3.event.x;
             rotate[1] = -d3.event.y;
             projection.rotate(rotate);
-            redraw(path);
+            redraw();
       }));
         
         // refreshing the template

@@ -36,17 +36,21 @@
         function redraw() {
             context.clearRect(0, 0, width, height);
             context.lineWidth = .5;
+    
+            context.fillStyle = SEA_COLOUR;
+            context.beginPath(), path({
+                type: "Sphere"
+            }), context.stroke(), context.fill();
+    
             if (land) {
                 context.strokeStyle = "#000";
+                context.fillStyle = LAND_COLOUR;
                 context.beginPath(), path(land), context.fill(), context.stroke();
                 context.beginPath(), path(boundaries), context.stroke();
             }
             context.strokeStyle = "#999";
             context.beginPath(), path(graticule), context.stroke();
             context.lineWidth = 2.5, context.strokeStyle = "#000";
-            context.beginPath(), path({
-                type: "Sphere"
-            }), context.stroke();
         }
 
         d3.json("js/data/world-110m.json", function(error, world) {
